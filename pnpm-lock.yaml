@@ -90,6 +90,9 @@ importers:
       '@poker/storage':
         specifier: workspace:*
         version: link:../storage
+      '@poker/strategy':
+        specifier: workspace:*
+        version: link:../strategy
       '@poker/wallet':
         specifier: workspace:*
         version: link:../wallet

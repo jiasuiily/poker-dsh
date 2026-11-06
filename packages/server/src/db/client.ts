@@ -31,6 +31,25 @@ CREATE TABLE IF NOT EXISTS ledger_entries (
   account_id text NOT NULL,
   amount integer NOT NULL
 );
+CREATE TABLE IF NOT EXISTS hands (
+  id text PRIMARY KEY,
+  engine_version integer NOT NULL,
+  config jsonb NOT NULL,
+  initial_deck jsonb NOT NULL,
+  log jsonb NOT NULL,
+  result jsonb NOT NULL,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE TABLE IF NOT EXISTS hand_analyses (
+  hand_id text PRIMARY KEY REFERENCES hands(id),
+  verdicts jsonb NOT NULL,
+  summary text NOT NULL,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE TABLE IF NOT EXISTS llm_usage (
+  date text PRIMARY KEY,
+  count integer NOT NULL
+);
 `;
 
 export type Db = PgliteDatabase<typeof schema>;
