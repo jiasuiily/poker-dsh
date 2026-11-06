@@ -11,12 +11,12 @@ import {
   type Street,
 } from '@poker/core';
 import {
-  decideBeginner,
-  decideAdvanced,
   decideTop,
+  getBot,
   newPlayerStats,
   updateStats,
   type PlayerStats,
+  type StyleId,
 } from '@poker/ai';
 import { buyIn, aiBuyIn, settle, dailyGrant, ACCOUNTS } from '@poker/wallet';
 import type { PersistentLedger } from '@poker/storage';
@@ -39,6 +39,7 @@ export class TableRoom extends Room {
   private readonly aiSeats = Array.from({ length: AI_COUNT }, (_, i) => i + 1);
   private aiTimer: ReturnType<typeof setTimeout> | undefined;
   private difficulty: Difficulty = 'advanced';
+  private style: StyleId = 'tag';
   private stats = new Map<number, PlayerStats>();
   private ledger!: PersistentLedger;
   private personality!: PersonalityEngine;
@@ -55,9 +56,12 @@ export class TableRoom extends Room {
     this.onMessage('new_hand', () => this.newHand());
   }
 
-  onJoin(_client: Client, options?: { difficulty?: string }): void {
+  onJoin(_client: Client, options?: { difficulty?: string; style?: string }): void {
     if (options?.difficulty === 'beginner' || options?.difficulty === 'advanced' || options?.difficulty === 'top') {
       this.difficulty = options.difficulty;
+    }
+    if (options?.style && ['tag', 'lag', 'nit', 'station', 'maniac'].includes(options.style)) {
+      this.style = options.style as StyleId;
     }
     this.ensureBalance();
     this.newHand();
@@ -121,10 +125,8 @@ export class TableRoom extends Room {
       let action: Action;
       if (this.difficulty === 'top') {
         action = decideTop(view, secureRng, this.stats);
-      } else if (this.difficulty === 'advanced') {
-        action = decideAdvanced(view, secureRng);
       } else {
-        action = decideBeginner(view, secureRng);
+        action = getBot(this.difficulty, this.style).decide(view, secureRng);
       }
       if (validateAction(this.game, action) !== null) {
         const toCall = this.game.highestBet - this.game.players[seat].streetBet;
