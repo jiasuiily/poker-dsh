@@ -3,10 +3,6 @@ import type { PlayerView } from '@poker/core';
 import { chartFor, chartFreq, preflopSituation } from '../src/charts';
 import { rangeWidth } from '../src/range';
 
-function width(entry: { raise: Map<string, number>; call: Map<string, number> }) {
-  return rangeWidth(entry.raise) + rangeWidth(entry.call);
-}
-
 function expectWidth(target: number, actual: number, label: string) {
   expect(Math.abs(actual - target), `${label}: ${actual} vs ${target}`).toBeLessThanOrEqual(0.04);
 }
@@ -69,7 +65,7 @@ describe('频率', () => {
           expect(w).toBeLessThanOrEqual(1);
           expect(w + (e.call.get(cls) ?? 0)).toBeLessThanOrEqual(1);
         }
-        for (const [cls, w] of e.call) {
+        for (const w of e.call.values()) {
           expect(w).toBeGreaterThanOrEqual(0);
           expect(w).toBeLessThanOrEqual(1);
         }
