@@ -9,6 +9,7 @@
   },
   "scripts": {
     "test": "pnpm -r test",
-    "typecheck": "pnpm -r typecheck"
+    "typecheck": "pnpm -r typecheck",
+    "sim:ai": "pnpm --filter @poker/ai sim:ai"
   }
 }

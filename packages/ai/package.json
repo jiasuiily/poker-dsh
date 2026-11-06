@@ -9,12 +9,15 @@
   },
   "scripts": {
     "test": "vitest run",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "sim:ai": "tsx scripts/sim-ai.ts"
   },
   "dependencies": {
-    "@poker/core": "workspace:*"
+    "@poker/core": "workspace:*",
+    "@poker/strategy": "workspace:*"
   },
   "devDependencies": {
+    "tsx": "^4.19.2",
     "typescript": "^5.6.3",
     "vitest": "^2.1.8"
   }

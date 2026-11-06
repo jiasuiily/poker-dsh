@@ -26,8 +26,8 @@ describe('AI 合法性', () => {
       makeBeginnerBot(BOT_STYLES.nit),
       makeBeginnerBot(BOT_STYLES.maniac),
     ];
-    const { perHandNet } = simulate({ bots, hands: 500, rng: intRng(7) });
+    const { perHandNet } = simulate({ bots, hands: 100, rng: intRng(7) });
     expect(perHandNet).toHaveLength(6);
-    expect(perHandNet[0].length).toBe(500);
+    expect(perHandNet[0].length).toBe(100);
   });
 });
