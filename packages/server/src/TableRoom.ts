@@ -4,18 +4,20 @@ import {
   applyAction,
   validateAction,
   projectView,
-  decideBeginner,
-  decideAdvanced,
-  decideTop,
   secureRng,
   potOf,
-  newPlayerStats,
-  updateStats,
-  type PlayerStats,
   type GameState,
   type Action,
   type Street,
 } from '@poker/core';
+import {
+  decideBeginner,
+  decideAdvanced,
+  decideTop,
+  newPlayerStats,
+  updateStats,
+  type PlayerStats,
+} from '@poker/ai';
 import { buyIn, aiBuyIn, settle, dailyGrant, ACCOUNTS } from '@poker/wallet';
 import type { PersistentLedger } from '@poker/storage';
 import type { PersonalityEngine, PersonalityContext } from '@poker/llm';
