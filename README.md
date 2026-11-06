@@ -57,6 +57,27 @@ pnpm typecheck       # 全仓类型检查
 pnpm sim:ai 20000    # 高级 vs 初级 2 万手，bb/100 + 95% 置信区间
 ```
 
+## 多实例（本机同时跑两个互不干扰的实例）
+
+每个实例独占一组端口和一个数据目录；前端地址可用环境变量覆盖。
+
+| 实例 | 游戏 WS | HTTP API | 前端 | 数据目录 |
+|---|---|---|---|---|
+| 手动测试 | 2568 | 8081 | 5173 | `packages/server/data/pglite` |
+| agent 测试 | 2578 | 8088 | 5176 | `packages/server/data/pglite-agent` |
+
+```bash
+# 手动测试
+pnpm --filter @poker/server start
+pnpm --filter @poker/web dev            # http://localhost:5173
+
+# agent 测试（与上互不干扰）
+PORT=2578 API_PORT=8088 PGLITE_DIR=data/pglite-agent pnpm --filter @poker/server start
+VITE_API_URL=http://localhost:8088 VITE_WS_URL=ws://localhost:2578 pnpm --filter @poker/web dev --port 5176
+```
+
+服务端对 PGlite 数据目录有启动锁：同一目录被两个进程打开时，后启动者会报「数据库目录正被进程 N 使用」并退出，避免写坏数据。
+
 ## 环境变量（服务端）
 
 | 变量 | 默认 | 说明 |
@@ -70,3 +91,10 @@ pnpm sim:ai 20000    # 高级 vs 初级 2 万手，bb/100 + 95% 置信区间
 | `LLM_API_KEY` | — | 设置后用真实大模型做解说（OpenAI 兼容） |
 | `LLM_BASE_URL` | DeepSeek | 大模型接口地址 |
 | `LLM_MODEL` | `deepseek-chat` | 模型名 |
+
+## 环境变量（前端）
+
+| 变量 | 默认 | 说明 |
+|---|---|---|
+| `VITE_API_URL` | `http://<host>:8081` | HTTP API 地址 |
+| `VITE_WS_URL` | `ws://<host>:2568` | Colyseus WebSocket 地址 |

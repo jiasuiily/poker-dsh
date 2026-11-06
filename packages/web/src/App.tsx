@@ -3,7 +3,7 @@ import { Client, type Room } from 'colyseus.js';
 
 const RANKS = ['2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A'];
 const SUITS = ['♠', '♥', '♦', '♣'];
-const API = `http://${window.location.hostname}:8081`;
+const API = import.meta.env.VITE_API_URL || `http://${window.location.hostname}:8081`;
 const STYLES: Record<string, string> = { tag: '紧凶', lag: '松凶', nit: '岩石', station: '跟注站', maniac: '疯子' };
 
 function cardName(c: number) {
@@ -208,7 +208,7 @@ function Game() {
 
   useEffect(() => {
     let disposed = false;
-    const client = new Client(`ws://${window.location.hostname}:2568`);
+    const client = new Client(import.meta.env.VITE_WS_URL || `ws://${window.location.hostname}:2568`);
     (async () => {
       try {
         const room = await client.joinOrCreate('table', { difficulty, style });

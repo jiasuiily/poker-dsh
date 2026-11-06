@@ -6,6 +6,7 @@ import { drizzle } from 'drizzle-orm/pglite';
 import type { PgliteDatabase } from 'drizzle-orm/pglite';
 import { PGlite } from '@electric-sql/pglite';
 import * as schema from './schema';
+import { acquireLock } from './lock';
 
 const DDL = `
 CREATE TABLE IF NOT EXISTS users (
@@ -55,6 +56,9 @@ CREATE TABLE IF NOT EXISTS llm_usage (
 export type Db = PgliteDatabase<typeof schema>;
 
 export async function createDb(dataDir = 'data/pglite'): Promise<Db> {
+  if (!dataDir.startsWith('memory://')) {
+    acquireLock(dataDir);
+  }
   const client = new PGlite(dataDir);
   await client.exec(DDL);
   return drizzle(client);
