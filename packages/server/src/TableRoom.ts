@@ -21,6 +21,8 @@ import {
 import { buyIn, aiBuyIn, settle, dailyGrant, ACCOUNTS } from '@poker/wallet';
 import type { PersistentLedger } from '@poker/storage';
 import type { PersonalityEngine, PersonalityContext } from '@poker/llm';
+import { ENGINE_VERSION } from '@poker/strategy';
+import type { HistoryRepo } from './db/history-repo';
 
 const AI_COUNT = 3;
 const AI_DELAY_MS = 900;
@@ -40,11 +42,13 @@ export class TableRoom extends Room {
   private stats = new Map<number, PlayerStats>();
   private ledger!: PersistentLedger;
   private personality!: PersonalityEngine;
+  private history!: HistoryRepo;
   private seq = 0;
 
-  onCreate(options: { ledger: PersistentLedger; personality: PersonalityEngine }): void {
+  onCreate(options: { ledger: PersistentLedger; personality: PersonalityEngine; history: HistoryRepo }): void {
     this.ledger = options.ledger;
     this.personality = options.personality;
+    this.history = options.history;
     this.maxClients = 1;
     for (let seat = 0; seat < 1 + AI_COUNT; seat++) this.stats.set(seat, newPlayerStats());
     this.onMessage('act', (_client, message) => this.handleAct(message));
@@ -167,6 +171,25 @@ export class TableRoom extends Room {
         { accountId: HUMAN_ACCOUNT, amount: humanChips },
         { accountId: ACCOUNTS.aiBank, amount: aiChips },
       ],
+    });
+    this.saveHand();
+  }
+
+  /** 把整手牌谱写入 Drizzle（异步，不阻塞） */
+  private saveHand(): void {
+    const g = this.game;
+    const seats = this.seats();
+    const result = {
+      winners: g.winners.map((w) => w.seat),
+      net: Object.fromEntries(g.players.map((p) => [String(p.seat), p.stack - seats[p.seat].stack])),
+    };
+    void this.history.save({
+      id: g.handId,
+      engineVersion: ENGINE_VERSION,
+      config: { seats, smallBlind: g.smallBlind, bigBlind: g.bigBlind, buttonSeat: g.buttonSeat },
+      initialDeck: g.initialDeck,
+      log: g.log,
+      result,
     });
   }
 
