@@ -1,0 +1,21 @@
+services:
+  poker:
+    build: .
+    ports:
+      - "2568:2568" # WebSocket（游戏服）
+      - "8080:8080" # 静态站点（前端）
+    environment:
+      - PORT=2568
+      - WEB_PORT=8080
+      - WEB_DIR=/app/packages/web/dist
+      - DB_PATH=/app/packages/server/data/poker.db
+      # 可选：真实大模型人格层
+      # - LLM_API_KEY=sk-...
+      # - LLM_BASE_URL=https://api.deepseek.com/chat/completions
+      # - LLM_MODEL=deepseek-chat
+    volumes:
+      - poker-data:/app/packages/server/data
+    restart: unless-stopped
+
+volumes:
+  poker-data:

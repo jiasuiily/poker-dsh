@@ -1,0 +1,17 @@
+node_modules
+**/node_modules
+**/dist
+data
+**/data
+.git
+.gitignore
+*.log
+*.tsbuildinfo
+.dsh-acl-report
+dump_*.py
+dump_*.txt
+docx_dump.txt
+make_docx.py
+德州扑克游戏设计方案.xlsx
+德州扑克网页版实施方案*.docx
+~$*

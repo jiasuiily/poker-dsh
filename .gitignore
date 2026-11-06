@@ -1,0 +1,18 @@
+node_modules/
+dist/
+coverage/
+*.log
+.DS_Store
+*.tsbuildinfo
+.dsh-acl-report/
+data/
+
+# 临时/scratch 文件
+dump_*.py
+dump_*.txt
+docx_dump.txt
+make_docx.py
+~$*
+*.xlsx
+德州扑克网页版实施方案_v4.docx
+德州扑克网页版实施方案 · 审核意见.docx
