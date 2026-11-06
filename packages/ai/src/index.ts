@@ -18,6 +18,8 @@ export function getBot(level: BotLevel, style: StyleId): Bot {
 // 兼容旧调用：beginnerBot = makeBeginnerBot(tag)
 export const beginnerBot = makeBeginnerBot(BOT_STYLES.tag);
 export const decideBeginner = beginnerBot.decide;
+export const advancedBot = makeAdvancedBot(BOT_STYLES.tag);
+export const decideAdvanced = advancedBot.decide;
 
 export * from './types';
 export * from './styles';
